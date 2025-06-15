@@ -25,19 +25,23 @@ namespace PrimeChemicalConnectionsClaculator
         }
         public uint Number
         {
-            get { return _number; }
+            get { return _number; } set { _number = value; }
         }
         public string Formula
         {
-            get { return _formula; }
+            get { return _formula; } set { _formula = value; }
         }
         public string Name
         {
-            get { return _name; }
+            get { return _name; } set { _name = value; }
         }
         public uint Mass
         {
             get { return _mass; }
+        }
+        public float Electronegativity
+        {
+            get; set;
         }
 
         public uint Period
