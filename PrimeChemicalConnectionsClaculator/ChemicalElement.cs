@@ -12,7 +12,7 @@ namespace PrimeChemicalConnectionsClaculator
         private string _formula;
         private string _name;
         private uint _mass;
-        private float _electronegativity;
+        private float? _electronegativity;
         private uint groupPos()
         {
             uint[] sizes = { 2, 8, 8, 18, 18, 32, 32 };
@@ -37,11 +37,11 @@ namespace PrimeChemicalConnectionsClaculator
         }
         public uint Mass
         {
-            get { return _mass; }
+            get { return _mass; } set { _mass = value; }
         }
-        public float Electronegativity
+        public float? Electronegativity
         {
-            get; set;
+            get { return _electronegativity; } set {  _electronegativity = value;}
         }
 
         public uint Period
@@ -115,7 +115,7 @@ namespace PrimeChemicalConnectionsClaculator
             }
         }
 
-        public ChemicalElement(uint number, string formula, string name, uint mass, float electronegativity)
+        public ChemicalElement(uint number, string formula, string name, uint mass, float? electronegativity)
         {
             if (number > 0)
             {
@@ -135,13 +135,13 @@ namespace PrimeChemicalConnectionsClaculator
             {
                 throw new ArgumentException("mass cannot be less than Atomic number");
             }
-            if (electronegativity>0.0f && electronegativity<5.0f)
+            if ((electronegativity>0.0f && electronegativity<5.0f)||electronegativity==null)
             {
                 _electronegativity = electronegativity;
             }
             else
             {
-                throw new ArgumentException("Electronegativity must be between 0 and 5");
+                throw new ArgumentException("Electronegativity must be between 0 and 5 or null");
             }
 
         }
