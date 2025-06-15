@@ -48,7 +48,7 @@ namespace PrimeChemicalConnectionsCalculatorTests
             Assert.AreEqual(c3.Name, "trigadolinium manganese");
         }
         [TestMethod]
-        public void KationSettersTest()
+        public void FirstSettersTest()
         {
             ChemicalElement e1 = new ChemicalElement(number: 1, formula: "H", name: "hydrogen", mass: 100, electronegativity: 2.2f);
             ChemicalElement e2 = new ChemicalElement(number: 25, formula: "Mn", name: "manganese", mass: 100, electronegativity: 1.55f);
@@ -60,17 +60,18 @@ namespace PrimeChemicalConnectionsCalculatorTests
             ChemicalConnection c2 = new ChemicalConnection(e1, e3);
             ChemicalConnection c3 = new ChemicalConnection(e4, e2);
 
-            c1.Kation = e4;
+            c1.First = e4;
+            c3.First = e1;
 
-            Assert.AreEqual(c1.Formula, "GdH2");
-            Assert.ThrowsException<ArgumentException>(() => c2.Kation = e5);
-            Assert.ThrowsException<ArgumentException>(() => c3.Kation = e1);
-            Assert.ThrowsException<ArgumentException>(() => c1.Kation = e1);
+            Assert.AreEqual(c1.Formula, "Gd3Mn");
+            Assert.AreEqual(c3.Formula, "MnH2");
+            Assert.ThrowsException<ArgumentException>(() => c2.First = e5);
+            Assert.ThrowsException<ArgumentException>(() => c1.First = e2);
             
 
         }
         [TestMethod]
-        public void AnionSettersTest()
+        public void SecondSettersTest()
         {
             ChemicalElement e1 = new ChemicalElement(number: 1, formula: "H", name: "hydrogen", mass: 100, electronegativity: 2.2f);
             ChemicalElement e2 = new ChemicalElement(number: 25, formula: "Mn", name: "manganese", mass: 100, electronegativity: 1.55f);
@@ -83,13 +84,14 @@ namespace PrimeChemicalConnectionsCalculatorTests
             ChemicalConnection c2 = new ChemicalConnection(e1, e3);
             ChemicalConnection c3 = new ChemicalConnection(e4, e2);
 
-            c1.Anion = e6;
+            c1.Second = e6;
+            c3.Second = e3;
 
-            Assert.AreEqual(c1.Formula, "MnF2");
-            Assert.ThrowsException<ArgumentException>(() => c2.Anion = e5);
-            Assert.ThrowsException<ArgumentException>(() => c3.Anion = e3);
-            Assert.ThrowsException<ArgumentException>(() => c1.Anion = e2);
-            
+            Assert.AreEqual(c1.Formula, "HF");
+            Assert.AreEqual(c3.Formula, "Cs6Gd");
+            Assert.ThrowsException<ArgumentException>(() => c2.Second = e5);
+            Assert.ThrowsException<ArgumentException>(() => c1.Second = e1);
+
 
         }
     }

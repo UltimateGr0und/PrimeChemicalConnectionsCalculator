@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -20,20 +21,32 @@ namespace PrimeChemicalConnectionsCalculator
             { 8, "okta" },
             { 9, "nona" },
         }; 
-        private ChemicalElement _kation;
+        private ChemicalElement _first;
         private uint _kationMultiplier;
-        private ChemicalElement _anion;
+        private ChemicalElement _second;
         private uint _anionMultiplier;
+        private bool _isFirstKation;
 
+        private void RecountIsFirstKation()
+        {
+            if (_first.Electronegativity > _second.Electronegativity)
+            {
+                _isFirstKation = false;
+            }
+            else
+            {
+                _isFirstKation = true;
+            }
+        }
         private void RecountMultipiers()
         {
-            int chargeAnion = Convert.ToInt32(_anion.Group) - 8;
-            if (_anion.Period == 1)
+            int chargeAnion = Convert.ToInt32(Anion.Group) - 8;
+            if (Anion.Period == 1)
             {
                 chargeAnion += 6;
             }
 
-            int chargeKation = Convert.ToInt32(_kation.Group);
+            int chargeKation = Convert.ToInt32(Kation.Group);
 
             if (chargeKation == 0 || chargeAnion == 0)
             {
@@ -46,24 +59,66 @@ namespace PrimeChemicalConnectionsCalculator
             _kationMultiplier = Convert.ToUInt32(Math.Abs(lcm / chargeKation));
         }
 
+        public ChemicalElement First
+        {
+            get { return _first; }
+            set
+            {
+                if (value.Electronegativity == null)
+                {
+                    throw new ArgumentException("No connection between elements without electronegativity");
+                }
+                if (value.Number == _second.Number)
+                {
+                    throw new ArgumentException("No connection between same elements");
+                }
+                _first = value;
+
+                RecountIsFirstKation();
+                RecountMultipiers();
+            }
+        }
+
+        public ChemicalElement Second
+        {
+            get { return _second; }
+            set
+            {
+                if (value.Electronegativity == null)
+                {
+                    throw new ArgumentException("No connection between elements without electronegativity");
+                }
+                if (value.Number == _first.Number)
+                {
+                    throw new ArgumentException("No connection between same elements");
+                }
+                _second = value;
+
+                RecountIsFirstKation();
+                RecountMultipiers();
+            }
+        }
+
+
+
         public string Name
         {
             get
             {
                 return (_kationMultiplier > 9 ? _kationMultiplier : Prefixes[_kationMultiplier])
-                    + _kation.Name
+                    + Kation.Name
                     + " "
                     + (_anionMultiplier > 9 ? _anionMultiplier : Prefixes[_anionMultiplier])
-                    + _anion.Name;
+                    + Anion.Name;
             }
         }
         public string Formula
         {
             get
             {
-                return _kation.Formula
+                return Kation.Formula
                     + (_kationMultiplier != 1 ? _kationMultiplier : "")
-                    + _anion.Formula
+                    + Anion.Formula
                     + (_anionMultiplier != 1 ? _anionMultiplier : "");
             }
         }
@@ -71,49 +126,26 @@ namespace PrimeChemicalConnectionsCalculator
         {
             get
             {
-                return _kation.Mass * _kationMultiplier + _anion.Mass * _anionMultiplier;
+                return Kation.Mass * _kationMultiplier + Anion.Mass * _anionMultiplier;
             }
         }
         public ChemicalElement Kation
         {
-            get { return _kation; }
-            set
-            {
-                if (value.Electronegativity == null)
+            get{
+                if (_isFirstKation)
                 {
-                    throw new ArgumentException("No connection between elements without electronegativity");
+                    return _first;
                 }
-                if (value.Electronegativity > Anion.Electronegativity)
-                {
-                    throw new ArgumentException("Too high elektronegativity for kation");
-                }
-                if (value.Number == _anion.Number)
-                {
-                    throw new ArgumentException("No connection between same elements");
-                }
-                _kation = value;
-                RecountMultipiers();
+                return _second;
             }
         }
         public ChemicalElement Anion
         {
-            get { return _anion; }
-            set
+            get
             {
-                if (value.Electronegativity == null)
-                {
-                    throw new ArgumentException("No connection between elements without electronegativity");
-                }
-                if (value.Electronegativity < Kation.Electronegativity)
-                {
-                    throw new ArgumentException("Too low elektronegativity for anion");
-                }
-                if (value.Number == _kation.Number)
-                {
-                    throw new ArgumentException("No connection between same elements");
-                }
-                _anion = value;
-                RecountMultipiers();
+                if (_isFirstKation)
+                    return _second;
+                return _first;
             }
         }
         public ChemicalConnection(ChemicalElement first, ChemicalElement second)
@@ -124,18 +156,10 @@ namespace PrimeChemicalConnectionsCalculator
             {
                 throw new ArgumentException("No connection between elements without electronegativity");
             }
+            _first = first;
+            _second = second;
 
-            if(first.Electronegativity > second.Electronegativity)
-            {
-                _anion = first;
-                _kation = second;
-            }
-            else
-            {
-                _anion = second;
-                _kation = first;
-            }
-
+            RecountIsFirstKation();
             RecountMultipiers();
         }
 
