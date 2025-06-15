@@ -163,6 +163,7 @@ namespace PrimeChemicalConnectionsCalculator
             RecountMultipiers();
         }
 
+        protected ChemicalConnection() { }
 
     }
 }

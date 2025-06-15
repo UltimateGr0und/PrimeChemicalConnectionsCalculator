@@ -1,4 +1,5 @@
-﻿using PrimeChemicalConnectionsCalculator;
+﻿using Microsoft.EntityFrameworkCore;
+using PrimeChemicalConnectionsCalculator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,13 @@ namespace ChemicalConnectionsDB.Models
 {  
     public class ChemicalConnectionModel : ChemicalConnection
     {
-        public int ChemicalConnectionModelId { get; set; }
-        ChemicalConnectionModel(int id, ChemicalElementModel first, ChemicalElementModel second)
+        public int Id { get; set; }
+        public ChemicalConnectionModel(int id, ChemicalElementModel first, ChemicalElementModel second)
             : base(first: first, second: second)
         {
-            ChemicalConnectionModelId = id;
+            Id = id;
         }
+        
+        private ChemicalConnectionModel():base() { }
     }
 }
