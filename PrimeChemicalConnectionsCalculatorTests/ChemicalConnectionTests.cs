@@ -1,4 +1,4 @@
-﻿using PrimeChemicalConnectionsClaculator;
+﻿using PrimeChemicalConnectionsCalculator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +46,51 @@ namespace PrimeChemicalConnectionsCalculatorTests
             Assert.AreEqual(c1.Name, "manganese dihydrogen");
             Assert.AreEqual(c2.Name, "caesium hydrogen");
             Assert.AreEqual(c3.Name, "trigadolinium manganese");
+        }
+        [TestMethod]
+        public void KationSettersTest()
+        {
+            ChemicalElement e1 = new ChemicalElement(number: 1, formula: "H", name: "hydrogen", mass: 100, electronegativity: 2.2f);
+            ChemicalElement e2 = new ChemicalElement(number: 25, formula: "Mn", name: "manganese", mass: 100, electronegativity: 1.55f);
+            ChemicalElement e3 = new ChemicalElement(number: 55, formula: "Cs", name: "caesium", mass: 100, electronegativity: 0.79f);
+            ChemicalElement e4 = new ChemicalElement(number: 64, formula: "Gd", name: "gadolinium", mass: 100, electronegativity: 1.2f);
+            ChemicalElement e5 = new ChemicalElement(number: 5, formula: "He", name: "_", mass: 100, electronegativity: null);
+
+            ChemicalConnection c1 = new ChemicalConnection(e1, e2);
+            ChemicalConnection c2 = new ChemicalConnection(e1, e3);
+            ChemicalConnection c3 = new ChemicalConnection(e4, e2);
+
+            c1.Kation = e4;
+
+            Assert.AreEqual(c1.Formula, "GdH2");
+            Assert.ThrowsException<ArgumentException>(() => c2.Kation = e5);
+            Assert.ThrowsException<ArgumentException>(() => c3.Kation = e1);
+            Assert.ThrowsException<ArgumentException>(() => c1.Kation = e1);
+            
+
+        }
+        [TestMethod]
+        public void AnionSettersTest()
+        {
+            ChemicalElement e1 = new ChemicalElement(number: 1, formula: "H", name: "hydrogen", mass: 100, electronegativity: 2.2f);
+            ChemicalElement e2 = new ChemicalElement(number: 25, formula: "Mn", name: "manganese", mass: 100, electronegativity: 1.55f);
+            ChemicalElement e3 = new ChemicalElement(number: 55, formula: "Cs", name: "caesium", mass: 100, electronegativity: 0.79f);
+            ChemicalElement e4 = new ChemicalElement(number: 64, formula: "Gd", name: "gadolinium", mass: 100, electronegativity: 1.2f);
+            ChemicalElement e5 = new ChemicalElement(number: 5, formula: "He", name: "_", mass: 100, electronegativity: null);
+            ChemicalElement e6 = new ChemicalElement(number: 9, formula: "F", name: "_", mass: 100, electronegativity: 3.98f);
+
+            ChemicalConnection c1 = new ChemicalConnection(e1, e2);
+            ChemicalConnection c2 = new ChemicalConnection(e1, e3);
+            ChemicalConnection c3 = new ChemicalConnection(e4, e2);
+
+            c1.Anion = e6;
+
+            Assert.AreEqual(c1.Formula, "MnF2");
+            Assert.ThrowsException<ArgumentException>(() => c2.Anion = e5);
+            Assert.ThrowsException<ArgumentException>(() => c3.Anion = e3);
+            Assert.ThrowsException<ArgumentException>(() => c1.Anion = e2);
+            
+
         }
     }
 }

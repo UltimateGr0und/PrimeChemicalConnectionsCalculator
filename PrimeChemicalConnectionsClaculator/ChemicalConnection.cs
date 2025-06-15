@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace PrimeChemicalConnectionsClaculator
+namespace PrimeChemicalConnectionsCalculator
 {
     public class ChemicalConnection : IChemical
     {
@@ -24,6 +24,27 @@ namespace PrimeChemicalConnectionsClaculator
         private uint _kationMultiplier;
         private ChemicalElement _anion;
         private uint _anionMultiplier;
+
+        private void RecountMultipiers()
+        {
+            int chargeAnion = Convert.ToInt32(_anion.Group) - 8;
+            if (_anion.Period == 1)
+            {
+                chargeAnion += 6;
+            }
+
+            int chargeKation = Convert.ToInt32(_kation.Group);
+
+            if (chargeKation == 0 || chargeAnion == 0)
+            {
+                throw new ArgumentException("Connection cannot be done");
+            }
+
+            int lcm = LCM.FindLCM(chargeAnion, chargeKation);
+
+            _anionMultiplier = Convert.ToUInt32(Math.Abs(lcm / chargeAnion));
+            _kationMultiplier = Convert.ToUInt32(Math.Abs(lcm / chargeKation));
+        }
 
         public string Name
         {
@@ -53,6 +74,48 @@ namespace PrimeChemicalConnectionsClaculator
                 return _kation.Mass * _kationMultiplier + _anion.Mass * _anionMultiplier;
             }
         }
+        public ChemicalElement Kation
+        {
+            get { return _kation; }
+            set
+            {
+                if (value.Electronegativity == null)
+                {
+                    throw new ArgumentException("No connection between elements without electronegativity");
+                }
+                if (value.Electronegativity > Anion.Electronegativity)
+                {
+                    throw new ArgumentException("Too high elektronegativity for kation");
+                }
+                if (value.Number == _anion.Number)
+                {
+                    throw new ArgumentException("No connection between same elements");
+                }
+                _kation = value;
+                RecountMultipiers();
+            }
+        }
+        public ChemicalElement Anion
+        {
+            get { return _anion; }
+            set
+            {
+                if (value.Electronegativity == null)
+                {
+                    throw new ArgumentException("No connection between elements without electronegativity");
+                }
+                if (value.Electronegativity < Kation.Electronegativity)
+                {
+                    throw new ArgumentException("Too low elektronegativity for anion");
+                }
+                if (value.Number == _kation.Number)
+                {
+                    throw new ArgumentException("No connection between same elements");
+                }
+                _anion = value;
+                RecountMultipiers();
+            }
+        }
         public ChemicalConnection(ChemicalElement first, ChemicalElement second)
         {
             if (first.Number == second.Number) throw new ArgumentException("No connection between same elements");
@@ -72,24 +135,8 @@ namespace PrimeChemicalConnectionsClaculator
                 _anion = second;
                 _kation = first;
             }
-            int chargeAnion = Convert.ToInt32(_anion.Group)-8;
-            if (_anion.Period == 1)
-            {
-                chargeAnion += 6;
-            }
-            
-            int chargeKation = Convert.ToInt32(_kation.Group);
 
-            if (chargeKation == 0 || chargeAnion == 0) 
-            {
-                throw new ArgumentException("Connection cannot be done");
-            }
-
-            int lcm = LCM.FindLCM(chargeAnion, chargeKation);
-
-            _anionMultiplier = Convert.ToUInt32(Math.Abs(lcm / chargeAnion));
-            _kationMultiplier = Convert.ToUInt32(Math.Abs(lcm / chargeKation));
-
+            RecountMultipiers();
         }
 
 

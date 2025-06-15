@@ -1,4 +1,4 @@
-﻿using PrimeChemicalConnectionsClaculator;
+﻿using PrimeChemicalConnectionsCalculator;
 
 namespace PrimeChemicalConnectionsCalculatorTests
 {

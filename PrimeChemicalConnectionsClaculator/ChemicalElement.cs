@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrimeChemicalConnectionsClaculator
+namespace PrimeChemicalConnectionsCalculator
 {
     public class ChemicalElement : IChemical
     {
@@ -115,7 +115,7 @@ namespace PrimeChemicalConnectionsClaculator
             }
         }
 
-        public ChemicalElement(uint number, string formula, string name, uint mass, float? electronegativity)
+        public ChemicalElement(uint number, uint mass, string formula="", string name="", float? electronegativity=null)
         {
             if (number > 0)
             {
